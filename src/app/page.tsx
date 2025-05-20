@@ -1,45 +1,51 @@
-"use client";
+import Image from 'next/image';
+import Link from 'next/link';
+import Head from 'next/head';
 
-import { useEffect, useState } from "react";
-import Header from "@/components/Header";
-import Masonry from "react-masonry-css";
-import ArtworkCard from "@/components/ArtworkCard";
-import { Artwork, fetchArtworks } from "@/lib/artworks";
+const sections = [
+  { id: 1, title: 'GALLERY', href: '/gallery', image: `${process.env.NEXT_PUBLIC_API_BASE_URL}/gallery.jpg` },
+  { id: 2, title: 'SHOP', href: '/shop', image: `${process.env.NEXT_PUBLIC_API_BASE_URL}/shop.jpg` },
+  { id: 3, title: 'IMPRINT', href: '/imprint', image: `${process.env.NEXT_PUBLIC_API_BASE_URL}/imprint.jpg` },
+];
 
-const breakpointColumnsObj = {
-  default: 4,
-  1100: 3,
-  700: 2,
-  500: 1
-};
-
-export default function HomePage() {
-
-  const [artworks, setArtworks] = useState<Artwork[]>([]);
-
-  useEffect(() => {
-    fetchArtworks().then(setArtworks).catch(console.error);
-  }, []);
-
+export default function Home() {
   return (
     <>
-      <Header />
-      <main className="px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6 text-center">Discover Art You'll Love</h1>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="flex gap-4"
-          columnClassName="masonry-column"
-        >
-          {artworks.map((art) => (
-            <ArtworkCard
-              key={art.id}
-              title={art.title}
-              imageUrl={art.image_url}
-              price={art.price}
-            />
+      <Head>
+        <title>Edgework – Curated Visual Art</title>
+        <meta name="description" content="Explore artwork, shop pieces, and learn about Edgework's creative vision." />
+      </Head>
+
+      <main className="min-h-screen flex flex-col items-center bg-white text-black">
+        {/* Header */}
+        <header className="w-full border-b py-6 text-center text-2xl font-bold tracking-widest uppercase">
+          EDGEWORK
+        </header>
+
+        {/* Cards */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-10 md:p-20 w-full max-w-6xl">
+          {sections.map((section) => (
+            <Link
+              key={section.id}
+              href={section.href}
+              className="group relative overflow-hidden rounded-lg shadow-lg"
+            >
+              <div className="relative aspect-[16/9] w-full">
+                <Image
+                  src={section.image}
+                  alt={section.title}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority
+                />
+              </div>
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h2 className="text-white text-2xl font-bold">{section.title}</h2>
+              </div>
+            </Link>
           ))}
-        </Masonry>
+        </section>
       </main>
     </>
   );

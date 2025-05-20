@@ -13,7 +13,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
     try {
       await login(email, password);
       onClose();
-    } catch (err) {
+    } catch (_err) {
       alert("Login failed");
     }
   };

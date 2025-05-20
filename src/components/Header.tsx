@@ -11,6 +11,10 @@ export default function Header() {
   const { customer, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
 
+  const _logout = async () => {
+    // ... logout logic ...
+  };
+
   return (
     <header className="flex items-center justify-between px-6 py-4 shadow-sm border-b bg-white sticky top-0 z-50">
       {/* Logo / Title */}
