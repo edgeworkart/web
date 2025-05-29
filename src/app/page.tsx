@@ -46,6 +46,11 @@ export default function Home() {
             </Link>
           ))}
         </section>
+
+        {/* Add a link to the admin panel */}
+        <a href="/admin" className="mt-10 p-4 bg-blue-500 text-white rounded-lg">
+          Admin Panel
+        </a>
       </main>
     </>
   );

@@ -1,6 +1,7 @@
 import "./globals.css";
 import { ReactNode } from "react";
 import { AuthProvider } from "@/context/AuthContext";
+import AdminPanel from './admin';
 
 export const metadata = {
   title: "Art Marketplace",
