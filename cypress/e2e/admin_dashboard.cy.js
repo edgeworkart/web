@@ -1,6 +1,6 @@
 describe('Admin Dashboard', () => {
   beforeEach(() => {
-    // Mock admin credentials
+    // Use existing seed data for admin credentials
     const adminCredentials = {
       email: 'admin@example.com',
       password: 'password123'
