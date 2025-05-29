@@ -1,6 +1,12 @@
 import React from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 const AdminPanel = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) return <p>Loading...</p>;
+  if (!user || !user.isAdmin) return <p>Access Denied</p>;
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}

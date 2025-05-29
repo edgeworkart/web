@@ -1,0 +1,8 @@
+## Context
+This monorepo has:
+
+- `edgework/api`: A Ruby on Rails API exposing RESTful endpoints for authentication, artworks, cart items, orders, and admin content.
+- `edgework/web`: A React + Next.js 15 frontend styled with Tailwind CSS.
+- JWT authentication stored in localStorage.
+- Admin and customer roles, each with separate capabilities.
+- Cursor is expected to wire up endpoints and build components that match available backend functionality.

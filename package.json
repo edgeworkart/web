@@ -25,6 +25,19 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/jest-dom": "^5.16.4",
+    "jest": "^27.4.5",
+    "@testing-library/user-event": "^13.5.0",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@types/jest": "^27.0.3",
+    "ts-jest": "^27.0.7",
+    "cypress": "^10.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.ts"]
   }
 }
