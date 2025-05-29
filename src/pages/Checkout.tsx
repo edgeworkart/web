@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
 import apiClient from '@/lib/axios';
 
-const Checkout = () => {
-  const [address, setAddress] = useState('');
-  const [orderTotal, setOrderTotal] = useState(0);
-  const [confirmation, setConfirmation] = useState('');
+interface CheckoutResponse {
+  total: number;
+}
 
-  const handleCheckout = async () => {
+const Checkout: React.FC = () => {
+  const [address, setAddress] = useState<string>('');
+  const [orderTotal, setOrderTotal] = useState<number>(0);
+  const [confirmation, setConfirmation] = useState<string>('');
+
+  const handleCheckout = async (): Promise<void> => {
     try {
-      const response = await apiClient.post('/orders', { address });
+      const response = await apiClient.post<CheckoutResponse>('/orders', { address });
       setOrderTotal(response.data.total);
       setConfirmation('Order placed successfully!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error placing order:', error);
-      setConfirmation('Failed to place order.');
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setConfirmation(`Failed to place order: ${error.response.data.message}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        setConfirmation('Failed to place order: No response from server.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setConfirmation('Failed to place order: An unexpected error occurred.');
+      }
     }
   };
 

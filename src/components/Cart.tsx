@@ -8,37 +8,58 @@ interface CartItem {
   price: number;
 }
 
-const Cart = () => {
+const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await apiClient.get('/cart_items');
+        const response = await apiClient.get<CartItem[]>('/cart_items');
         setCartItems(response.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching cart items:', error);
+        if (error.response) {
+          console.error('Server responded with an error:', error.response.data);
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+        } else {
+          console.error('Error setting up request:', error.message);
+        }
       }
     };
 
     fetchCartItems();
   }, []);
 
-  const removeItem = async (itemId: number) => {
+  const removeItem = async (itemId: number): Promise<void> => {
     try {
       await apiClient.delete(`/cart_items/${itemId}`);
       setCartItems(cartItems.filter(item => item.id !== itemId));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error removing item:', error);
+      if (error.response) {
+        console.error('Server responded with an error:', error.response.data);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
     }
   };
 
-  const updateQuantity = async (itemId: number, quantity: number) => {
+  const updateQuantity = async (itemId: number, quantity: number): Promise<void> => {
     try {
       await apiClient.patch(`/cart_items/${itemId}`, { quantity });
       setCartItems(cartItems.map(item => item.id === itemId ? { ...item, quantity } : item));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating quantity:', error);
+      if (error.response) {
+        console.error('Server responded with an error:', error.response.data);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
     }
   };
 
@@ -57,10 +78,12 @@ const Cart = () => {
               value={item.quantity}
               onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
               className="w-16 p-2 border border-gray-300 rounded mr-2"
+              data-cy="quantity"
             />
             <button
               onClick={() => removeItem(item.id)}
               className="bg-red-500 text-white p-2 rounded"
+              data-cy="remove-item"
             >
               Remove
             </button>

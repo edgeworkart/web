@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
-const Login = () => {
+const Login: React.FC = () => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     try {
       await login(email, password);
       alert('Login successful!');
-    } catch (error) {
-      alert('Login failed!');
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      if (error.response) {
+        alert(`Login failed: ${error.response.data.message}`);
+      } else if (error.request) {
+        alert('Login failed: No response from server.');
+      } else {
+        alert('Login failed: An unexpected error occurred.');
+      }
     }
   };
 
@@ -28,6 +35,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             required
+            data-cy="email"
           />
         </div>
         <div className="mb-4">
@@ -38,9 +46,10 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             required
+            data-cy="password"
           />
         </div>
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Log In</button>
+        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded" data-cy="submit">Log In</button>
       </form>
     </div>
   );

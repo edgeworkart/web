@@ -6,14 +6,14 @@ describe('Admin Dashboard', () => {
       password: 'password123'
     };
 
-    // Visit login page and perform login
-    cy.visit('/login');
-    cy.get('input[name="email"]').type(adminCredentials.email);
-    cy.get('input[name="password"]').type(adminCredentials.password);
-    cy.get('button[type="submit"]').click();
-
-    // Ensure login was successful
-    cy.url().should('include', '/admin/dashboard');
+    // Use cy.session to manage authentication state
+    cy.session('admin', () => {
+      cy.visit('/login');
+      cy.get('[data-cy=email]').type(adminCredentials.email);
+      cy.get('[data-cy=password]').type(adminCredentials.password);
+      cy.get('[data-cy=submit]').click();
+      cy.url().should('include', '/admin/dashboard');
+    });
   });
 
   it('should load the admin dashboard with a welcome message', () => {
@@ -29,11 +29,11 @@ describe('Admin Dashboard', () => {
     cy.visit('/admin/dashboard');
 
     // Navigate to the Artworks tab
-    cy.get('a[href="/admin/artworks"]').click();
+    cy.get('[data-cy=artworks-tab]').click();
 
     // Verify a list of artworks is shown
-    cy.get('.artwork-list').should('be.visible');
-    cy.get('.artwork-item').should('have.length.greaterThan', 0);
+    cy.get('[data-cy=artwork-list]').should('be.visible');
+    cy.get('[data-cy=artwork-item]').should('have.length.greaterThan', 0);
   });
 
   it('should allow creating a new artwork', () => {
@@ -41,18 +41,18 @@ describe('Admin Dashboard', () => {
     cy.visit('/admin/dashboard');
 
     // Navigate to the Artworks tab
-    cy.get('a[href="/admin/artworks"]').click();
+    cy.get('[data-cy=artworks-tab]').click();
 
     // Open the modal or form to create a new artwork
-    cy.get('button#create-artwork').click();
+    cy.get('[data-cy=create-artwork]').click();
 
     // Fill out the form
-    cy.get('input[name="title"]').type('New Artwork');
-    cy.get('textarea[name="description"]').type('Description of the new artwork');
-    cy.get('input[name="artist"]').type('Artist Name');
+    cy.get('[data-cy=title]').type('New Artwork');
+    cy.get('[data-cy=description]').type('Description of the new artwork');
+    cy.get('[data-cy=artist]').type('Artist Name');
 
     // Submit the form
-    cy.get('button[type="submit"]').click();
+    cy.get('[data-cy=submit]').click();
 
     // Verify the new artwork is in the list
     cy.contains('New Artwork').should('be.visible');

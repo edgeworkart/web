@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import withAuth from '@/hoc/withAuth';
 import ArtworksTab from '@/components/admin/ArtworksTab';

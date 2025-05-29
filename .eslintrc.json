@@ -7,5 +7,13 @@
     "indent": ["error", 2],
     "no-unused-vars": "warn",
     "no-console": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "warn"
+      }
+    }
+  ]
 } 

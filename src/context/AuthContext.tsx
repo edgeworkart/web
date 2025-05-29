@@ -1,81 +1,84 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import api, { setAuthToken } from "@/lib/api";
+import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
-type Customer = {
-  id: string;
-  email: string;
+interface User {
+  isAdmin: boolean;
   role: string;
-};
+  // Add other user properties as needed
+}
 
-type AuthContextType = {
-  customer: Customer | null;
-  token: string | null;
+interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-};
+  error: string | null;
+  user: User | null;
+  customer: User | null;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [token, setToken] = useState<string | null>(null);
-  const [customer, setCustomer] = useState<Customer | null>(null);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const t = localStorage.getItem("token");
-    if (t) {
-      setAuthToken(t);
-      setToken(t);
-      // optionally fetch customer info here
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      const decodedUser = jwtDecode<User>(token);
+      setUser(decodedUser);
     }
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await api.post("/customers/login", {
-      customer: { email, password },
-    });
+    if (loginAttempts >= 8) {
+      setError('Too many failed attempts. Please try again later.');
+      return;
+    }
 
-    const token = res.headers["authorization"]?.split(" ")[1];
-    if (token) {
-      setAuthToken(token);
-      localStorage.setItem("token", token);
-      setToken(token);
-      setCustomer(res.data.customer);
+    try {
+      const response = await axios.post('/api/login', { email, password });
+      const token = response.data.token;
+      localStorage.setItem('jwt', token);
+      const decodedUser = jwtDecode<User>(token);
+      setUser(decodedUser);
+      setLoginAttempts(0);
+      setError(null);
+    } catch (err) {
+      setLoginAttempts(prev => prev + 1);
+      setError('Invalid credentials.');
     }
   };
 
   const signup = async (email: string, password: string) => {
-    const res = await api.post("/customers/signup", {
-      customer: { email, password },
-    });
-
-    const token = res.headers["authorization"]?.split(" ")[1];
-    if (token) {
-      setAuthToken(token);
-      localStorage.setItem("token", token);
-      setToken(token);
-      setCustomer(res.data.customer);
+    try {
+      const response = await axios.post('/api/signup', { email, password });
+      const token = response.data.token;
+      localStorage.setItem('jwt', token);
+      const decodedUser = jwtDecode<User>(token);
+      setUser(decodedUser);
+      setError(null);
+    } catch (err) {
+      setError('Signup failed. Please try again.');
     }
   };
 
-  const logout = () => {
-    setAuthToken(null);
-    localStorage.removeItem("token");
-    setToken(null);
-    setCustomer(null);
-  };
-
   return (
-    <AuthContext.Provider value={{ customer, token, login, signup, logout }}>
+    <AuthContext.Provider value={{ login, signup, error, user, customer: user }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
-  return ctx;
-};
+export default AuthContext;

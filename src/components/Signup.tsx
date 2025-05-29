@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
-const Signup = () => {
+const Signup: React.FC = () => {
   const { signup } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     try {
       await signup(email, password);
       alert('Signup successful!');
-    } catch (error) {
-      alert('Signup failed!');
+    } catch (error: any) {
+      console.error('Signup failed:', error);
+      if (error.response) {
+        alert(`Signup failed: ${error.response.data.message}`);
+      } else if (error.request) {
+        alert('Signup failed: No response from server.');
+      } else {
+        alert('Signup failed: An unexpected error occurred.');
+      }
     }
   };
 
@@ -28,6 +35,7 @@ const Signup = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             required
+            data-cy="email"
           />
         </div>
         <div className="mb-4">
@@ -38,9 +46,10 @@ const Signup = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded mt-1"
             required
+            data-cy="password"
           />
         </div>
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Sign Up</button>
+        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded" data-cy="submit">Sign Up</button>
       </form>
     </div>
   );

@@ -1,6 +1,7 @@
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
+import { Linter } from "eslint";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,7 +42,33 @@ const eslintConfig = [
         }
       }
     ]
-  }
+  },
+  {
+    ignores: ["node_modules/**", ".next/**"],
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+    },
+    rules: {
+      semi: ["error", "always"],
+      quotes: ["error", "double"],
+      indent: ["error", 2],
+      "no-unused-vars": "warn",
+      "no-console": "off",
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn",
+    },
+  },
 ];
 
+/** @type {Linter.FlatConfig[]} */
 export default eslintConfig;
