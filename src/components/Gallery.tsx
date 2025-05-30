@@ -8,6 +8,19 @@ interface Artwork {
   price: number;
 }
 
+// Helper to fix artwork image URLs
+function getArtworkImageUrl(url: string): string {
+  if (!url) return '';
+  // If starts with /rails/ or http://localhost/rails/, prepend or replace host
+  if (url.startsWith('/rails/')) {
+    return `http://localhost:3001${url}`;
+  }
+  if (url.startsWith('http://localhost/rails/')) {
+    return url.replace('http://localhost', 'http://localhost:3001');
+  }
+  return url;
+}
+
 const Gallery = () => {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
 
@@ -33,7 +46,7 @@ const Gallery = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
       {artworks.map((artwork) => (
         <div key={artwork.id} className="bg-white shadow-md rounded-lg overflow-hidden" data-cy="artwork-item">
-          <img src={artwork.image} alt={artwork.title} className="w-full h-48 object-cover" data-cy="artwork-image" />
+          <img src={getArtworkImageUrl(artwork.image)} alt={artwork.title} className="w-full h-48 object-cover" data-cy="artwork-image" />
           <div className="p-4">
             <h2 className="text-xl font-bold mb-2" data-cy="artwork-title">{artwork.title}</h2>
             <p className="text-gray-700 mb-4" data-cy="artwork-price">${artwork.price}</p>
