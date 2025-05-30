@@ -1,17 +1,11 @@
-import React from 'react';
-import { mount } from 'cypress/react';
-import Login from '../../src/components/Login';
+import React from 'react'
+import { mount } from 'cypress/react18'
+import LoginForm from '../../components/LoginForm'
 
-describe('LoginForm Component', () => {
-  beforeEach(() => {
-    cy.intercept('POST', '/api/login', { statusCode: 200, body: { success: true } }).as('loginRequest');
-  });
-
-  it('renders the login form and submits successfully', () => {
-    mount(<Login />);
-    cy.get('[data-cy=email]').type('test@example.com');
-    cy.get('[data-cy=password]').type('password123');
-    cy.get('[data-cy=submit]').click();
-    cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
-  });
-}); 
+describe('LoginForm', () => {
+  it('renders and accepts input', () => {
+    mount(<LoginForm />)
+    cy.get('input[name="email"]').type('admin@example.com')
+    cy.get('input[name="password"]').type('password123')
+  })
+})

@@ -1,9 +1,9 @@
 import React from 'react';
-import { mount } from 'cypress/react';
-import ArtworkCard from '../../src/components/ArtworkCard';
+import { mount } from 'cypress/react18';
+import ArtworkCard from '../../components/ArtworkCard';
 
-describe('ArtworkCard Component', () => {
-  it('renders the artwork card with title, image, and price', () => {
+describe('ArtworkCard', () => {
+  it('renders with title, image, and price', () => {
     const props = {
       title: 'Sample Artwork',
       imageUrl: '/sample.jpg',
